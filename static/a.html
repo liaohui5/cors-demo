@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>postMessage + iframe 跨域</title>
+  </head>
+  <body>
+    <h2>这是 a.html</h2>
+    <p>
+      1. 用 ifream 在 http://localhost:9999/a.html 去加载 ->
+      http://localhost:8888/b.html
+    </p>
+    <p>2. 在 a.html 中监听 b.html 加载完事件, 给 b.html 发送一个消息</p>
+    <p>3. 在 b.html 中监听消息, 然后自动 将信息处理一下 再发回给 a.html</p>
+    <p>4. 打开控制台查看效果</p>
+    <p>
+      <input type="text" id="msg" />
+      <button id="btn">点击发送数据</button>
+    </p>
+    <iframe
+      id="iframe"
+      src="http://localhost:8888/b.html"
+      style="display: none"
+    ></iframe>
+    <script>
+      var ifreame = document.getElementById("iframe");
+      var msgInput = document.getElementById("msg");
+
+      var win;
+      ifreame.onload = function () {
+        win = ifreame.contentWindow;
+      };
+
+      window.onmessage = function (e) {
+        // 第一次会自动触发一次, 不用管它, 如果不想他第一次直接触发
+        // 将这个监听函数放到iframe.onload中就可以了
+        console.log("[a.html<onmessage>]: ", e.data);
+      };
+
+      document.getElementById("btn").onclick = function () {
+        // * 代表允许所有域名
+        // msgInput.value && win.postMessage(msgInput.value, "*");
+        msgInput.value && win.postMessage(msgInput.value, "http://localhost:8888");
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>跨域</title>
+    <style>
+      ul,
+      li {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+      }
+      h2,
+      li {
+        line-height: 30px;
+        padding: 0 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>跨域方式: 打开控制台查看效果</h2>
+    <ul id="container">
+      <!-- <li><button id="jsonp">jsonp跨域</button></li> -->
+    </ul>
+
+    <script src="./jsonp.js"></script>
+    <script
+      src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+      integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      var maps = [
+        // jsonp
+        {
+          id: "jsonp",
+          handler: function () {
+            jsonp("http://localhost:8888/jsonp", function (res) {
+              console.log(res);
+            });
+          },
+        },
+
+        // cors
+        {
+          id: "cors",
+          handler: function () {
+            fetch("http://localhost:8888/cors", {
+              headers: {
+                // 必须服务端允许这些自定义请求头
+                "Access-Token": "access-token-value",
+                "Refresh-Token": "refresh-token-value",
+                "Client-Signature": "signature-value",
+              },
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                console.log(res);
+              });
+          },
+        },
+
+        // proxy
+        {
+          id: "proxy",
+          handler: function () {
+            // 实际接口地址: http://musicapi.liaohui5.cn:8080/search?keywords=海阔天空
+            fetch("http://localhost:8888/proxy/search?keywords=海阔天空")
+              .then((res) => res.json())
+              .then((res) => {
+                console.log(res);
+              });
+          },
+        },
+
+        // nginx 反向代理
+        {
+          id: "nginx_proxy",
+          handler: function () {
+            alert("请查看项目根目录下的 nginx_proxy.conf 文件");
+          },
+        },
+
+        // websocket
+        {
+          id: "websocket",
+          handler: function () {
+            const ws = new WebSocket("ws://localhost:8889");
+            ws.onopen = function () {
+              ws.send(JSON.stringify({"type": "get-users"}));
+            };
+            ws.onmessage = function (e) {
+              console.log(JSON.parse(e.data));
+            };
+          },
+        },
+
+        // postMessage
+        {
+          id: "iframe+postMessage",
+          handler: function () {
+            window.location.href = "http://localhost:9999/a.html";
+          },
+        },
+
+        // domain + iframe
+        {
+          id: "iframe+domain",
+          handler: function() {
+            alert("请查看项目根目录下的 domain_iframe.png 文件");
+          }
+        }
+      ];
+      
+      var fragment = document.createDocumentFragment();
+      var item, liItem, btnItem;
+      for (var i = 0; i < maps.length; i++) {
+        item = maps[i];
+        liItem = document.createElement("li");
+        btnItem = document.createElement("button");
+        btnItem.addEventListener("click", item.handler, false);
+        btnItem.textContent = item.id + "跨域方式";
+        liItem.append(btnItem);
+        fragment.append(liItem);
+      }
+      document.getElementById("container").append(fragment);
+    </script>
+  </body>
+</html>

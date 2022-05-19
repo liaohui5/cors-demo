@@ -1,0 +1,21 @@
+{
+  "code": "200",
+  "msg": "用户列表",
+  "data": [
+    {
+      "id": "520000199610071230",
+      "username": "罗敏",
+      "email": "m.qqwvmrpki@hygwv.at"
+    },
+    {
+      "id": "230000197602242240",
+      "username": "梁芳",
+      "email": "e.qxalhcrih@nfrccv.ae"
+    },
+    {
+      "id": "350000200804228600",
+      "username": "袁杰",
+      "email": "e.qbeuuv@ksmfdgyt.ua"
+    }
+  ]
+}
